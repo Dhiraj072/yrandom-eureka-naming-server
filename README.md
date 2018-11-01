@@ -1,4 +1,4 @@
-# Youtube service
+# Yrandom Eureka Naming Server 
 
 Naming server for [yrandom](https://github.com/Dhiraj072/yrandom)
 
