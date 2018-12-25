@@ -4,9 +4,11 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "gradle.plugin.fi.evident.gradle.beanstalk:gradle-beanstalk-plugin:0.2.1"
 	}
 }
 
@@ -14,6 +16,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'fi.evident.beanstalk'
 
 group = 'com.github.dhiraj072.eureka'
 version = '0.0.1-SNAPSHOT'
@@ -36,5 +39,26 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+beanstalk {
+	s3Endpoint = "s3-ap-southeast-1.amazonaws.com"
+	beanstalkEndpoint = "elasticbeanstalk.ap-southeast-1.amazonaws.com"
+
+	deployments {
+		// Deploy to an existing env
+		staging {
+			file = tasks.bootJar
+			application = 'yrandom-eureka-naming-server'
+			environment = 'YrandomEurekaNamingServer-staging'
+		}
+//		// Create a new env for each version (to use URL swapping for blue/green deployment)
+//		production {
+//			file = tasks.shadowJar
+//			application = 'youtube-service'
+//			environment = "youtube-service-${project.version.replaceAll('\\.', '-')}"
+//			template = 'default' // Saved configuration name to use to create each env
+//		}
 	}
 }
